@@ -40,34 +40,50 @@ def get_exhibit_details(link):
     title = driver.find_element(By.TAG_NAME, "h1").text
     exhibit_number = project_details.find_element(By.TAG_NAME, "text").text
     artists = driver.find_element(By.XPATH, "//li[strong[contains(text(), 'Artist')]]").text
+    artists = artists.split(':')[1].strip()
     medium = driver.find_element(By.XPATH, "//li[strong[contains(text(), 'Medium')]]").text
+    medium = medium.split(':')[1].strip()
     address = driver.find_element(By.XPATH, "//li[strong[contains(text(), 'Address')]]").text.split('\n')[0]
+    address = address.split(':')[1].strip()
     physical_access = driver.find_element(By.XPATH, "//li[strong[contains(text(), 'Physical Access')]]").text
+    physical_access = physical_access.split(':')[1].strip()
 
     # optional information that may or may not exist
     project_type = None
     try: 
         project_type = driver.find_element(By.XPATH, "//li[strong[contains(text(), 'Project Type')]]").text
+        project_type = project_type.split(':')[1].strip()
+
     except NoSuchElementException:
         pass
+    
+    # This exhibit is missing the address on the detail page
+    if title == "Avian":
+        address = "The Bentway"
+    if title == "Assemblies":
+        address = "Hagerman St. Parking Lot"
 
-    return [title, exhibit_number, address, link, artists, medium, physical_access, project_type]
+    return {"Title": title, "Exhibit Number": exhibit_number, "Address": address + " ON", "Link": link, "Artists": artists, "Medium": medium, "Physical Access": physical_access, "Project Type": project_type}
+
+def get_exhibit_data(exhibit_links):
+    exhibits = []
+    for link in exhibit_links:
+        data = get_exhibit_details(link)
+        exhibits.append(data)
+
+    # sort by exhibit number
+    return sorted(exhibits, key=lambda x: int(x["Exhibit Number"]))
+
+
+def write_exhibits_to_csv(exhibits):
+    header = ['Title', 'Exhibit Number', 'Address', 'Link', 'Artists', 'Medium', 'Physical Access', 'Project Type']
+
+    with open('exhibits.csv', 'w', encoding='UTF8') as f:
+        writer = csv.DictWriter(f, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(exhibits)
 
 
 exhibit_links = get_exhibit_links()
-
-
-def write_exhibits_to_csv():
-    header = ['title', 'exhibit_number', 'address', 'link', 'artists', 'medium', 'physical_access', 'project_type']
-
-    with open('exhibits.csv', 'w', encoding='UTF8') as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-
-        for link in exhibit_links:
-            data = get_exhibit_details(link)
-
-            writer.writerow(data)
-
-
-write_exhibits_to_csv()
+exhibits = get_exhibit_data(exhibit_links)
+write_exhibits_to_csv(exhibits)
