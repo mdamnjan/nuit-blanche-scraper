@@ -19,3 +19,8 @@ Click on an exhibit to see details about it or get directions
 
 <img height="400" class="img-fluid" src="https://github.com/mdamnjan/nuit-blanche-scraper/blob/main/images/google-maps-pic4.png" alt="img-verification"> <img height="400" class="img-fluid" src="https://github.com/mdamnjan/nuit-blanche-scraper/blob/main/images/google-maps-pic2.png" alt="img-verification">
 
+### Removing it from your map
+To remove the map from `Google Maps` entirely, you'll need to log into [Google My Maps](https://www.google.com/maps/d/u/0/).
+
+
+If you just want to stop seeing the map in your app, click on any of the exhibit icons and select `View Map Legend`, and then `Close`. You can always open it again through the `Saved` tab, clicking on `Maps`.
